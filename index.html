@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>Next level Search API</title>
+  <meta name="description"
+        content="Next level Search API, Lunr.js, OpenSearch, and more ...">
+  <meta name="author" content="Saul Willers">
+
+  <link rel="stylesheet" href="dist/reset.css">
+  <link rel="stylesheet" href="dist/reveal.css">
+  <link rel="stylesheet" href="dist/theme/night.css">
+  <link rel="stylesheet" href="dist/theme/dark.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pnx-dark-blue: #161b59;
+      --pnx-background-color: transparent;
+      --pnx-light-blue: #c8f1ff;
+      --pnx-light-blue-opaque: #c8f1ffcc;
+      --pnx-link: #0270b9;
+      --pnx-link-hover: #161b59;
+    }
+    .cross {
+      color: red;
+    }
+    .img--offscreen {
+      position: absolute;
+      right: 10%;
+      bottom: 10%;
+      display: block;
+    }
+
+    .reveal blockquote {
+      width: 100%;
+    }
+    .check {
+      color: green;
+    }
+
+    body {
+      background-image: -webkit-gradient(
+          linear,
+          left top,
+          left bottom,
+          color-stop(0.48, #EBECF0),
+          color-stop(0.67, #FFFFFF)
+      );
+      background-image: -o-linear-gradient(bottom, #EBECF0 48%, #FFFFFF 67%);
+      background-image: -moz-linear-gradient(bottom, #EBECF0 48%, #FFFFFF 67%);
+      background-image: -webkit-linear-gradient(bottom, #EBECF0 48%, #FFFFFF 67%);
+      background-image: -ms-linear-gradient(bottom, #EBECF0 48%, #FFFFFF 67%);
+      background-image: linear-gradient(to bottom, #EBECF0 48%, #FFFFFF 67%);
+    }
+
+    .backgrounds .slide-background {
+      background-image: url('./images/background.png');
+      background-size: cover;
+    }
+
+    .backgrounds .slide-background:first-child {
+      background-image: url('./images/title-bg.png');
+    }
+
+    .reveal .controls .controls-arrow::after, .reveal .controls .controls-arrow::before {
+      background-color: var(--pnx-dark-blue);
+    }
+    body .reveal {
+      --r-heading-font: 'Roboto Mono',Helvetica,Arial,sans-serif;
+      --r-selection-color: var(--pnx-dark-blue);
+      --r-heading-font-weight: 700;
+      --r-selection-background-color:  var(--pnx-dark-blue);
+      --r-heading-color: var(--pnx-dark-blue);
+      --r-link-color: var(--pnx-link);
+      --r-link-color-hover: var(--pnx-link-hover);
+      background-color: var(--pnx-background-color);
+      color: var(--pnx-dark-blue);
+    }
+    .reveal .slide-background-content {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='204' height='41' viewBox='0 0 204 41' aria-labelledby='logo-title' role='img'%3E%3Ctitle id='logo-title'%3EPrevious Next%3C/title%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath fill='%2332C2DA' d='M196.738 38.654h-79.046l4.237-29.957h79.129z'%3E%3C/path%3E%3Cpath d='M204 6.764h-84.342l-.273 1.895-4.271 29.422-.364 2.506H198.994l.28-1.886 4.355-29.424.371-2.513zm-2.619 2.2-4.355 29.424h-79.665l4.271-29.424h79.75z' fill='%23000'%3E%3C/path%3E%3Cpath d='M184.093 17.378c-.114-.113-.268-.113-.383 0l-1.223 1.21c-.115.117-.115.267 0 .38l4.499 4.458c.099.098.099.258 0 .357l-4.499 4.457c-.115.113-.117.266-.001.38l1.224 1.21c.114.115.269.115.383 0l6.1-6.04a.263.263 0 0 0 0-.37l-6.1-6.042zM138.21 17.302h1.803c.18 0 .28.09.253.286l-1.694 11.968c-.027.18-.127.25-.289.25h-2.291c-.143 0-.253-.054-.306-.214l-2.47-8.136-1.163 8.1c-.027.18-.127.25-.29.25h-1.802c-.18 0-.28-.089-.252-.285l1.696-11.969c.025-.178.126-.25.287-.25h2.29c.144 0 .252.054.308.215l2.468 8.145 1.164-8.11c.027-.178.126-.25.289-.25M149.459 27.787l-.244 1.768c-.018.18-.126.25-.288.25h-7.77c-.182 0-.272-.088-.253-.284l1.695-11.969c.016-.178.126-.25.288-.25h7.754c.179 0 .27.09.25.286l-.241 1.768c-.02.179-.127.25-.289.25h-5.41l-.378 2.635h4.922c.18 0 .27.108.253.286l-.271 1.768c-.018.178-.126.25-.289.25h-4.958l-.406 2.958h5.382c.18 0 .271.088.253.284M162.312 17.623l-4.094 5.949 2.497 5.93c.074.18-.016.304-.215.304h-2.19a.33.33 0 0 1-.325-.214l-1.478-3.528-2.472 3.58c-.072.109-.198.162-.341.162h-2.3c-.215 0-.288-.143-.161-.321l4.173-6.047-2.453-5.832c-.07-.18.02-.304.218-.304h2.172a.33.33 0 0 1 .325.214l1.45 3.44 2.408-3.492c.072-.109.198-.162.343-.162h2.282c.215 0 .287.125.16.321M173.164 17.589l-.253 1.767c-.018.18-.126.25-.287.25h-3.003l-1.416 9.95c-.018.178-.126.25-.287.25h-2.093c-.18 0-.27-.088-.252-.285l1.407-9.916h-2.986c-.179 0-.27-.088-.253-.284l.245-1.768c.017-.18.125-.25.289-.25h8.636c.18 0 .289.089.253.286' fill='%23000'%3E%3C/path%3E%3Cpath fill='%23FFF' d='M120.177 32.348H2.624L6.98 2.25h117.47z'%3E%3C/path%3E%3Cpath d='M127.064 0H5.011l-.28 1.932L.373 32.028 0 34.598h122.149l.277-1.937L126.7 2.565 127.064 0zm-2.613 2.25-4.274 30.099H2.62L6.98 2.25h117.47z' fill='%23000'%3E%3C/path%3E%3Cpath d='M36.78 14.32c0-.929-.478-1.02-1.568-1.02h-2.075l-.523 3.698h1.957c1.722 0 2.209-.947 2.209-2.679m2.515-.23c0 3.535-1.452 5.215-4.94 5.215H32.29l-.568 3.947c-.028.168-.126.25-.29.25h-2.09c-.18 0-.27-.098-.243-.286l1.694-11.968c.027-.17.126-.25.289-.25h4.346c2.902 0 3.867 1.098 3.867 3.091M43.53 16.998h1.957c1.72 0 2.208-.947 2.208-2.68 0-.927-.48-1.016-1.568-1.016h-2.075l-.523 3.696zm5.652 6.18c.089.197.036.323-.18.323h-2.039c-.144 0-.27-.054-.323-.18l-1.767-4.017h-1.669l-.568 3.946c-.027.17-.126.25-.289.25h-2.09c-.181 0-.27-.098-.244-.285l1.694-11.967c.028-.172.126-.25.289-.25h4.346c2.903 0 3.867 1.097 3.867 3.09 0 2.742-.874 4.367-2.893 4.965l1.866 4.126zM59.681 21.482l-.242 1.768c-.02.18-.126.25-.29.25h-7.77c-.182 0-.27-.09-.253-.286l1.696-11.967c.017-.178.125-.25.287-.25h7.754c.18 0 .27.09.252.285l-.243 1.769c-.018.179-.126.25-.289.25h-5.41l-.378 2.635h4.922c.182 0 .272.107.253.286l-.27 1.768c-.019.178-.126.25-.29.25h-4.958l-.406 2.956h5.383c.181 0 .272.09.252.286M70.543 10.997h2.138c.197 0 .278.125.208.313l-4.744 11.986c-.054.143-.153.206-.307.206H64.53c-.16 0-.252-.091-.27-.25l-1.361-11.97c-.02-.188.072-.285.253-.285h2.1c.162 0 .28.097.289.26l.838 9.537h.298l3.562-9.582c.053-.152.152-.215.305-.215M82.586 13.3h-2.741l-1.126 7.896h2.695c.18 0 .288.09.253.286l-.244 1.77c-.018.178-.126.25-.29.25h-8.096c-.18 0-.27-.091-.253-.288l.246-1.768c.016-.177.126-.25.288-.25h2.758l1.127-7.895H74.49c-.18 0-.269-.09-.252-.285l.243-1.769c.018-.179.127-.25.289-.25h8.096c.18 0 .287.09.253.286l-.245 1.768c-.017.178-.127.25-.287.25M86.864 16.838l-.153 1.053c-.423 2.974.036 3.368 1.47 3.368 1.57 0 2.263-.537 2.687-3.51l.144-1.054c.433-2.974-.029-3.366-1.47-3.366-1.56 0-2.263.535-2.678 3.51m6.68-.019-.152 1.071c-.64 4.52-2.02 5.877-5.328 5.877-3.425 0-4.527-1.509-3.878-6.02l.145-1.08c.65-4.493 2.037-5.85 5.328-5.85 3.437 0 4.525 1.51 3.885 6.002M105.073 11.282l-1.083 7.61c-.485 3.358-2.09 4.877-5.003 4.877-3.02 0-4.336-1.67-3.849-5.028l1.064-7.493c.017-.18.127-.25.288-.25h2.092c.18 0 .27.088.253.284l-1.082 7.61c-.218 1.51.144 2.376 1.342 2.376 1.379 0 2.057-1.018 2.28-2.527l1.065-7.493c.02-.18.127-.25.289-.25h2.091c.18 0 .27.088.253.284M115.105 19.625c0 2.839-2.055 4.107-5.21 4.107-2.966 0-4.456-1.044-4.266-3.25.028-.197.135-.285.3-.285h1.854c.163 0 .253.141.28.347.056.482.74.858 1.967.858 1.766 0 2.495-.545 2.495-1.652 0-.813-.44-1.135-1.938-1.474-2.117-.482-3.984-1.232-3.984-3.457 0-2.616 1.848-3.965 4.707-3.965 2.804 0 4.29.974 4.22 3.135-.019.241-.217.33-.435.33h-1.55c-.244 0-.388-.142-.45-.348-.171-.527-.822-.786-1.822-.786-1.487 0-2.146.554-2.146 1.518 0 .688.246 1.08 1.561 1.385 2.216.5 4.417 1.16 4.417 3.537M17.79 11.073c.114-.113.269-.115.383-.002l1.222 1.213c.116.114.116.266 0 .38l-4.497 4.457c-.099.098-.099.258 0 .357l4.497 4.457c.116.113.118.265.002.38l-1.224 1.21a.257.257 0 0 1-.383 0l-6.1-6.04a.263.263 0 0 1 0-.37l6.1-6.042zM122.15 34.598l-4.71 4.056.348-5.412z' fill='%23000'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
+      background-position: right bottom;
+      background-position-x: 2%;
+      background-position-y: 96%;
+      background-repeat: no-repeat;
+      background-size: initial;
+    }
+
+    .reveal a:hover {
+      background-color: var(--pnx-light-blue);
+      outline: 0;
+    }
+    .reveal .credit {
+      color: #fff;
+      font-size: 16px !important;
+    }
+
+    img .reveal {
+      max-height: 75%;
+    }
+
+    section[data-background] {
+      background: var(--pnx-light-blue-opaque);
+    }
+
+    ul.tight li {
+      padding: 0;
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.4em;
+    }
+
+    .twocol ul {
+      columns: 2;
+    }
+
+    .underline {
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+    }
+    .underline::before {
+      width: 100%;
+      z-index: -1;
+      height: 2rem;
+      display: block;
+      background-color: var(--pnx-light-blue);
+      position: absolute;
+      top: 1rem;
+      content: "";
+    }
+
+    section.tall {
+      height: 60%;
+    }
+
+    .small {
+      font-size: 1.5rem;
+    }
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .middle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vue code {
+      background: #232629 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='logo' viewBox='0 0 128 128' width='24' height='24' data-v-7b849662=''%3E%3Cpath fill='%2342b883' d='M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z' data-v-7b849662=''%3E%3C/path%3E%3Cpath fill='%2335495e' d='M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z' data-v-7b849662=''%3E%3C/path%3E%3C/svg%3E") 2% 98% no-repeat;
+    }
+    .react code {
+      background: #232629 url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='-10.5 -9.45 21 18.9' fill='none' xmlns='http://www.w3.org/2000/svg' style='color:rgb(8, 126, 164)'%3E%3Ccircle cx='0' cy='0' r='2' fill='currentColor'%3E%3C/circle%3E%3Cg stroke='currentColor' stroke-width='1' fill='none'%3E%3Cellipse rx='10' ry='4.5'%3E%3C/ellipse%3E%3Cellipse rx='10' ry='4.5' transform='rotate(60)'%3E%3C/ellipse%3E%3Cellipse rx='10' ry='4.5' transform='rotate(120)'%3E%3C/ellipse%3E%3C/g%3E%3C/svg%3E") 2% 98% no-repeat;
+    }
+    li.react {
+      background: transparent url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='-10.5 -9.45 21 18.9' fill='none' xmlns='http://www.w3.org/2000/svg' style='color:rgb(8, 126, 164)'%3E%3Ccircle cx='0' cy='0' r='2' fill='currentColor'%3E%3C/circle%3E%3Cg stroke='currentColor' stroke-width='1' fill='none'%3E%3Cellipse rx='10' ry='4.5'%3E%3C/ellipse%3E%3Cellipse rx='10' ry='4.5' transform='rotate(60)'%3E%3C/ellipse%3E%3Cellipse rx='10' ry='4.5' transform='rotate(120)'%3E%3C/ellipse%3E%3C/g%3E%3C/svg%3E") 0 50% no-repeat;
+      padding-left: 30px;
+    }
+    li.vue {
+      background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='logo' viewBox='0 0 128 128' width='24' height='24' data-v-7b849662=''%3E%3Cpath fill='%2342b883' d='M78.8,10L64,35.4L49.2,10H0l64,110l64-110C128,10,78.8,10,78.8,10z' data-v-7b849662=''%3E%3C/path%3E%3Cpath fill='%2335495e' d='M78.8,10L64,35.4L49.2,10H25.6L64,76l38.4-66H78.8z' data-v-7b849662=''%3E%3C/path%3E%3C/svg%3E") 0 50% no-repeat;
+      padding-left: 30px;
+    }
+    .col2 {
+      grid-row: 1/2;
+      grid-column: 2/3;
+    }
+    .col1 {
+      grid-row: 1/2;
+      grid-column: 1/2;
+    }
+    #🪟-view-from-my-office {
+      margin-top: -3%;
+    }
+  </style>
+
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+    document.getElementsByTagName('head')[0].appendChild(link);
+  </script>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+    <section data-markdown="slides.md"
+             data-separator="^\n---\n$"
+             data-vertical="^\n--\n$"
+             data-notes="^Note:">
+    </section>
+  </div>
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+  // More info about initialization & config:
+  // - https://revealjs.com/initialization/
+  // - https://revealjs.com/config/
+  Reveal.initialize({
+    hash: true,
+    width: 1500,
+    // Learn about plugins: https://revealjs.com/plugins/
+    plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+  });
+</script>
+</body>
+</html>
