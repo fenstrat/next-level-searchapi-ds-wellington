@@ -1,7 +1,6 @@
 
-## Next level Search API
-#### Tips for custom search in Drupal
-<div class="middle"><img alt="Drupal South logo" src="images/drupalsouth-logo.png" height="78" width="60" /></div>
+Notes:
+- ➡️ To start ...
 
 ---
 
