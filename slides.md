@@ -30,7 +30,7 @@ Notes:
 - We're building our own house
 - We live off grid, spring fed damn for water, solar + batteries for power, composing toilet, Starlink for internet
 - All possible thanks to PNX's distributed team
-- Side note - We're hiring! Come work with inspiring teammates
+- Side note - We're not currently hiring. But probably will be in future, so keep an eye out and come work with inspiring teammates
 
 ---
 
@@ -424,12 +424,156 @@ Notes:
 - ➡️ The Search API OpenSearch module is maintained by my colleague and boss Kim Pepper
 - You guessed it, it's a fork of the Elasticsearch connector module 
 - Has all the regular integration for indexing, field mapping, views etc.
-- It supports facets, More Like This, boosting, synonyms
+- It supports facets, More Like This, synonyms
+- Boosting is supported at index time and query time, very powerful
 - Recently added search_as_you_type field, which  provides a simple way to set up autocomplete, no need to configure ngrams and the like
+- This is pretty useful as getting autocomplete working well can be quite fiddly
 - Though there is also full support for ngrams and edge ngrams
+- Also supports did-you-mean, to suggest corrections for misspelled search terms
 - ➡️ Out of the box is supports basic auth to connect to the backend
 - It provides a Connector plugin type for customising backend authentication
 - This means you can roll your own backend, or connect to a hosted service
+
+---
+
+### 📖 OpenSearch fundamentals
+
+<div class="two-column">
+<div class="fragment fade-in col1">
+<p>Request</p>
+<pre class="js">
+<code>
+{
+  "query": {
+    "must": {
+      "match": {
+        "query": "DrupalSouth",
+        "analyzer": "standard",
+        "operator": "and"
+      }
+    }
+  }
+}
+</code>
+</pre>
+</div>
+
+<div class="fragment fade-in col2">
+<p>Response</p>
+<pre class="js">
+<code>
+{
+  "hits": {
+    "total": {
+      "value": 2,
+    },
+    "hits": [
+      {
+        "title": "DrupalSouth Wellington 2023",
+        "venue": "The Embassy Theatre",
+      },
+      {
+        "title": "DrupalSouth Brisbane 2022",
+        "venue": "The Westin",
+      }
+    ]
+  }
+}
+</code>
+</pre>
+</div>
+</div>
+
+Notes:
+- ➡️ OpenSearch is JSON driven, so here is a sample query
+- It's simply searching for "DrupalSouth" via a must match query
+- ➡️ The response returned from OpenSearch is also JSON
+- It's found 2 results, and has a title and venue field for each
+
+---
+
+### 📖 Use a query builder
+
+<ul>
+<li class="fragment fade-in"><a href="https://elastic-builder.js.org/docs/">elastic-builder.js.org/docs</a></li>
+<li class="fragment fade-in">Wait, raw JSON?</li>
+</ul>
+
+Notes:
+- That sample query was pretty straight forward, but it can get complicated quickly
+- If those giant JSON blobs are scary, then there's a tool to help you
+- ➡️ Rather than hand crafting your queries you can use it
+- Allows you to build up an object that represents your query and then cast that to a JSON object that you can post directly to OpenSearch
+- ➡️ Why all this raw JSON? Can't views just do this for me?
+- Well yes, views can. All the regular integration of search from within views is totally possible with OpenSearch
+- But views for search can sometime be a little limiting, not to mention hard to theme
+- Because of that, a number of our more modern approaches to search are implementing OpenSearch in a different way
+
+---
+
+### 📖 Partially decoupled search
+
+<ul>
+<li class="fragment fade-in">React apps inside Drupal</li>
+</ul>
+
+Notes:
+- ➡️ React apps embedded in Drupal pages, or partially decoupled search
+- Allows us to keep all the goodness we love from Drupal, but allows faster iteration and developer control over search
+- Supports multiple search apps on the same page, with independent filters
+- Avoid round trips to Drupal for querying, filtering and sorting
+
+---
+
+### 📖 Sample React search
+
+<pre class="react fragment fade-in">
+<code style="font-size: .8em; line-height: 1.1em">
+const App = () => {
+  &lt;&gt;
+    &lt;header&gt;
+      &lt;h1&gt;Search&lt;/h1&gt;
+    &lt;/header&gt;
+    ...
+    &lt;AllPager /&gt;
+    &lt;SliceProvider slice={globalSearchSlice}&gt;
+      &lt;h2&gt;Global&lt;/h2&gt;
+      &lt;ResultsPerPage /&gt;
+      &lt;Pager /&gt;
+    &lt;/SliceProvider&gt;
+    &lt;SliceProvider slice={imageSearchSlice}&gt;
+      &lt;h2&gt;Images&lt;/h2&gt;
+      &lt;ResultsPerPage /&gt;
+      &lt;Pager /&gt;
+    &lt;/SliceProvider&gt;
+  &lt;/&gt;
+);
+</code>
+</pre>
+
+Notes:
+- Let's take a look at a skeleton React search app
+- ➡️ Here we're using something called slice provider which comes from Redux Toolkit
+- That allows us to reuse the same components like ResultsPerPage and Pager
+- The rendering then affects just that slice and, nothing else
+- This approach is also using Tanstack query which provides cached results when filtering
+- So when you filter results, anything that's already run previously is cached and the results show instantly
+
+---
+
+### 📖 Full implementation
+
+<ul>
+<li class="fragment fade-in"><a href="https://www.previousnext.com.au/blog/decoupled-opensearch-case-study">Decoupled OpenSearch: A Case Study</a></li>
+<li class="fragment fade-in"><a href="https://www.previousnext.com.au/blog/powerful-react-redux-toolkit-pattern-reuseable-state-slices">A powerful React + Redux Toolkit pattern (reuseable state slices)</a></li>
+</ul>
+
+Notes:
+- The full implementation is a session or two by itself
+- ➡️ For more info see Adam's session from DrupalSouth Brisbane
+- ➡️ And also Jack's blog post outlining the approach to slice
+- So, the flexibility of this approach is great, but keep in mind for simpler requirements it might not be a good fit
+- But again, OpenSearch supports all the regular point and click views integration
 
 ---
 
@@ -440,22 +584,25 @@ Notes:
 </ul>
 
 Notes:
+- Finally, when it comes time to deploy OpenSearch you can roll your own, or a hosted version is also an option
 - ➡️ A hosted service like Amazon OpenSearch Service 
-- It offers an alternative backend and provides hands off managed search provided by AWS
+- It offers an alternative backend and provides hands off managed search by AWS
 - AWS maintain the OpenSource stack and manage version updates
-- It offer services like scaling, replication, Role Based Access Control, and data visualisation
+- Means you're able to run a highly available OpenSearch cluster without having to worry about how you manage it
+- High availability is actually quite rare in the Solr world
+- It also offers services like replication, Role Based Access Control, and data visualisation
 - You'll notice we've come full circle here with a hosted search solution!
 - The reality is sometimes SaaS is a good fit
 
 ---
 
-### 📋️ Summary
+### 📋️ A quick recap
 
 <a href="https://fenstrat.github.io/next-level-searchapi-ds-wellington">fenstrat.github.io/next-level-searchapi-ds-wellington</a>
 
 Notes:
 - These slides are available on Github if you like to refer to them
-- Search is an important part of most Drupal sites.
+- To recap, search is an important part of most Drupal sites.
 - While SaaS solutions can be great, custom building your search stack can solve your exact needs
 - Hopefully this session has shown you a few new tricks to add to your search tool belt
 
