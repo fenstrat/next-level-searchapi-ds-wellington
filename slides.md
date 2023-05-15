@@ -1,5 +1,7 @@
 
 Notes:
+- Welcome to Next level Search API
+- Tips for custom search in Drupal
 - ➡️ To start ...
 
 ---
@@ -140,7 +142,7 @@ Notes:
 - ➡️ Drupal 7 site then needs to implement hook_search_api_solr_documents_alter
 - Simply loops over each document to be indexed (i.e. a Drupal 7 node)
 - Builds a rendered item using the node title and summary, and an absolute URL to link to the full content
-- Output is themed, but it's important to not that it is just html, which Solr can consume and add into its document index
+- Output is themed, but it's important to note that it is just html, which Solr can consume and add into its document index
 - Finally, we call addField() on the document to add the rendered item
 - Additional fields, e.g. title or taxonomy, can be added as needed
 - This is obviously Drupal 7 code, there are corresponding Event Subscribers for Drupal 8+
@@ -155,7 +157,7 @@ Notes:
 
 Notes:
 - Now we're ready to display the search results
-- All indexed fields are available for processing as normal, for example applying a boost to a title fields
+- All indexed fields are available for processing as normal, for example applying a boost to a title field
 - ➡️ Important option on the server is to enable Solr to send full search results
 - This allows our indexed Solr documents to be returned
 - ➡️ Fields are then available for Full text search in views
@@ -190,7 +192,7 @@ Notes:
 <div class="middle"><img alt="Solr facets overview" src="images/solr-facets-overview.png" width="50%" height="50%" /></div>
 
 Notes:
-- Here are the facet requirements
+- Here are the simplified facet requirements
 - A list of content, display as images in this case
 - Two filters, or facets on Schools and Programs
 
@@ -223,7 +225,7 @@ Notes:
 <div class="fragment fade-in">Empty facets (zero results) don't disappear!</div>
 
 Notes:
-- The difference comes when a facet is clicked
+- The difference comes when a facet is activated
 - Here, Program 2 has been clicked
 - ➡️ Facets with zero results **still show**
 - In normal facetting these results would not be show at all, as they're not part of the query results
@@ -314,7 +316,7 @@ Notes:
 - Next we create a second set of fake facets without the excludes
 - Finally, we set the fake facet options to match those of a real facet
 - Massive hat tip to my colleague Lee Rowlands who found that this was actually possible, and helped a lot in implementing it
-- This is a bit of an edge case for a client requirement, but likely something that could not be implemented on SaaS search platform
+- This is a bit of an edge case for a client requirement, but likely something that could not be implemented on a SaaS search platform
 
 ---
 
@@ -364,6 +366,8 @@ Notes:
 - These documents are sent as bundles of json to the client where their browser builds the index
 - As a result there's no Node.js dependency on the server
 - This means no build process so things like regular or even automated scheduled content changes are indexed with no latency
+- If you've ever deployed something like a statically generated site with Node.js or friends, you'll know that this build time and associated latency for content updates is a big deal
+- It's a problem that doesn't exist with this implementation of Lunr
 
 ---
 
@@ -389,10 +393,11 @@ Notes:
 Notes:
 - There are some important considerations when using Lunr
 - ➡️ No cost is incurred for any sessions that don't actually make use of search
-- For optimisation a light index of document titles can be built for the autocomplete, with a separate larger index only used once a search form is actually submitted
+- This is because the index is only sent to the client when they first interact with search
+- Still, it can be worth optimising by creating a light weight index of document titles for the autocomplete, with a separate larger index only used once a search form is actually submitted
 - ➡️ There are some practical limits of requiring the client browser to build the index
 - It performs well for hundreds or up to a few thousand documents, however it isn't a good fit for large search indexes
-- ➡️ There's also a corresponding JavaScript API to allow the frontend to query the index with no reliance on the Druapl backend
+- ➡️ There's also a corresponding JavaScript API to allow the frontend to query the index with no reliance on the Druapl backend, which is useful in decoupled situations
 
 ---
 
@@ -407,7 +412,7 @@ Notes:
 - ➡️ And finally we have OpenSearch
 - This is an open source software suite for search
 - It is a fork of Elasticsearch and Kibana created in 2021 by Amazon
-- Two side to every fork, but essentially AWS opted to go its own way and create OpenSearch
+- Two side to every fork, but essentially AWS opted to go its own way and create OpenSearch, that's the very short version
 - If you're familiar with Elastic then it largely maps to OpenSearch
 - ➡️ The project is under the Apache 2.0 license, which bodes well for the maintainership of the project into the future
 
@@ -430,7 +435,7 @@ Notes:
 - This is pretty useful as getting autocomplete working well can be quite fiddly
 - Though there is also full support for ngrams and edge ngrams
 - Also supports did-you-mean, to suggest corrections for misspelled search terms
-- ➡️ Out of the box is supports basic auth to connect to the backend
+- ➡️ Out of the box it supports basic auth to connect to the backend
 - It provides a Connector plugin type for customising backend authentication
 - This means you can roll your own backend, or connect to a hosted service
 
@@ -520,8 +525,10 @@ Notes:
 Notes:
 - ➡️ React apps embedded in Drupal pages, or partially decoupled search
 - Allows us to keep all the goodness we love from Drupal, but allows faster iteration and developer control over search
+- Essentially React apps are embedded via blocks, which can then be placed via Layout Builder
 - Supports multiple search apps on the same page, with independent filters
-- Avoid round trips to Drupal for querying, filtering and sorting
+- By independent, we mean filters that can apply to a single search listing on the page, or even to all results across the page
+- Clever out-of-the-box caching by Tanstack query can avoid round trips to Drupal for querying, filtering and sorting
 
 ---
 
@@ -553,8 +560,9 @@ const App = () => {
 
 Notes:
 - Let's take a look at a skeleton React search app
-- ➡️ Here we're using something called slice provider which comes from Redux Toolkit
-- That allows us to reuse the same components like ResultsPerPage and Pager
+- ➡️ Here a results page is displaying two separate result sets, one for Global search and one for Images
+- We're using something called a slice provider which comes from Redux Toolkit
+- That allows us to reuse the same React components like ResultsPerPage and Pager
 - The rendering then affects just that slice and, nothing else
 - This approach is also using Tanstack query which provides cached results when filtering
 - So when you filter results, anything that's already run previously is cached and the results show instantly
@@ -571,7 +579,7 @@ Notes:
 Notes:
 - The full implementation is a session or two by itself
 - ➡️ For more info see Adam's session from DrupalSouth Brisbane
-- ➡️ And also Jack's blog post outlining the approach to slice
+- ➡️ And also Jack's blog post outlining the approach to slices
 - So, the flexibility of this approach is great, but keep in mind for simpler requirements it might not be a good fit
 - But again, OpenSearch supports all the regular point and click views integration
 
@@ -587,9 +595,10 @@ Notes:
 - Finally, when it comes time to deploy OpenSearch you can roll your own, or a hosted version is also an option
 - ➡️ A hosted service like Amazon OpenSearch Service 
 - It offers an alternative backend and provides hands off managed search by AWS
-- AWS maintain the OpenSource stack and manage version updates
+- AWS maintain the OpenSearch stack and manage version updates
 - Means you're able to run a highly available OpenSearch cluster without having to worry about how you manage it
 - High availability is actually quite rare in the Solr world
+- So if you have high uptime requirements, hosted OpenSearch could tick a lot of boxes
 - It also offers services like replication, Role Based Access Control, and data visualisation
 - You'll notice we've come full circle here with a hosted search solution!
 - The reality is sometimes SaaS is a good fit
@@ -604,6 +613,9 @@ Notes:
 - These slides are available on Github if you like to refer to them
 - To recap, search is an important part of most Drupal sites.
 - While SaaS solutions can be great, custom building your search stack can solve your exact needs
+- Solr still offers a powerful backend to power your search, with many points to customise to your exact requirements
+- Lunr.js could be a super fast search solution for smaller data sets
+- Finally, OpenSearch can fulfil a lot of enterprise requirements, all rolled into an optional hosted service
 - Hopefully this session has shown you a few new tricks to add to your search tool belt
 
 ---
