@@ -20,6 +20,8 @@ Notes:
 Notes:
 - I'm Saul
 - ➡️ I'm a Drupal Developer at PreviousNext
+- I've been doing Drupal since 2010, and helped found Drupal Gold Coast and Drupal Chile in South America
+- I remain inspired by what we create as a community
 
 ---
 
@@ -28,10 +30,10 @@ Notes:
 <div class="middle"><img alt="View from Saul's office" src="images/sauls-office.jpg" style="max-width: 70%;" /></div>
 
 Notes:
-- I live in the Northern Rivers of NSW with my wife and young kids
+- I live in the Northern Rivers of NSW back across the ditch in Australia, with my wife and young kids
 - We're building our own house
 - We live off grid, spring fed damn for water, solar + batteries for power, composing toilet, Starlink for internet
-- All possible thanks to PNX's distributed team
+- All possible thanks to Drupal, and PNX's distributed team
 - Side note - We're not currently hiring. But probably will be in future, so keep an eye out and come work with inspiring teammates
 
 ---
@@ -336,6 +338,7 @@ Notes:
 - Search run client side, or on the server with Node.js
 - ➡️ Drupal implementation extends Search API
 - It was written by former PNX colleague Sam Becker, and I have a soft spot for it as I maintain it now
+- The module itself takes a lightweight approach and is basically feature complete, but patches are obviously most welcome
 
 ---
 
